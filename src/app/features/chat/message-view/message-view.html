@@ -1,0 +1,61 @@
+<div class="h-full flex flex-col relative bg-slate-900">
+    
+  <div class="absolute top-6 left-0 right-0 flex px-4 justify-center z-20 pointer-events-none">
+    
+    <div class="w-full bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-full p-1.5 pr-4 pl-2 flex items-center gap-4 shadow-2xl pointer-events-auto">
+      
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <img src="avatars/avatar_default.svg" class="ml-1 w-10 h-10 rounded-full object-cover" alt="Avatar">
+          <span class="absolute bottom-0 right-0 w-2.5 h-2.5 border-slate-800 rounded-full"></span>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-white leading-tight">{{ chatPartnerName() }}</h2>
+          <p class="text-[10px] text-green-400 flex items-center gap-1 font-medium">
+            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Online
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 ml-auto">
+        <div class="w-px h-8 bg-slate-700/50"></div>
+
+        <div class="flex items-center gap-1 text-slate-400">
+          <button class="p-2 hover:bg-slate-700/50 hover:text-white rounded-full transition"><span class="material-icons text-xl">videocam</span></button>
+          <button class="p-2 hover:bg-slate-700/50 hover:text-white rounded-full transition"><span class="material-icons text-xl">call</span></button>
+          <button class="p-2 hover:bg-slate-700/50 hover:text-white rounded-full transition"><span class="material-icons text-xl">more_horiz</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto px-6 pt-28 pb-4 custom-scrollbar">
+    <div class="min-h-full flex flex-col justify-end space-y-6">
+      @for (msg of messagesService.currentMessages(); track msg.id) {
+        <app-message-bubble
+          [content]="msg.content"
+          [isMine]="msg.sender_username === myUserName" 
+          [isRead]="msg.is_read? true : false"
+          [time]="msg.created_at">
+        </app-message-bubble>
+      }
+    </div>
+  </div>
+
+
+  <div class="p-6 pt-2">
+    <div class="bg-slate-800/80 backdrop-blur-md rounded-full p-1.5 pl-4 flex items-center gap-2 border border-slate-700 shadow-lg relative z-20 transition-all duration-300 focus-within:shadow-[0_0_20px_rgba(37,99,235,0.3)] focus-within:border-blue-500/50 group">
+      
+      <button class="text-slate-400 hover:text-white transition rounded-full p-1">
+        <span class="material-icons rotate-45 text-xl">attach_file</span>
+      </button>
+      
+      <input type="text" placeholder="Type a message..." class="flex-1 bg-transparent text-sm text-white placeholder-slate-500 focus:outline-none py-2">
+      
+      <button class="p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-[0_0_10px_rgba(37,99,235,0.5)] transition flex items-center justify-center">
+        <span class="material-icons text-sm">send</span>
+      </button>
+    </div>
+  </div>
+
+</div>
