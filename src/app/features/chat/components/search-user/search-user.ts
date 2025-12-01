@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '@core/services/user.service';
 import { ConversationsService } from '@core/services/conversations.service';
+import { AuthService } from '@core/auth/auth.service';
 import { User, ConversationGet } from '@core/models';
 
 @Component({
@@ -21,6 +22,7 @@ export class SearchUser {
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
   private conversationsService = inject(ConversationsService);
+  private authService = inject(AuthService);
 
   conversations = input<ConversationGet[]>([]);
   close = output<void>();
@@ -39,6 +41,13 @@ export class SearchUser {
     if (!user || !currentConversations) return false;
     
     return currentConversations.some(c => c.participant_two_username === user.username);
+  });
+
+  isSelf = computed(() => {
+    const user = this.foundUser();
+    const currentUser = this.authService.currentUser();
+    if (!user || !currentUser) return false;
+    return user.username === currentUser.username;
   });
 
   onSearch() {

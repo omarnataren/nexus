@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, computed, OnDestroy } from '@angular/core';
 import { RouterLink, RouterOutlet, Router, RouterLinkActive } from '@angular/router';
 import { ChatCard } from '../components/chat-card/chat-card';
 import { SearchUser } from '../components/search-user/search-user';
@@ -7,6 +7,8 @@ import { BottomNav } from '../components/bottom-nav/bottom-nav';
 import { Conversation, ConversationGet } from '@core/models';
 import { ConversationsService } from '@core/services/conversations.service';
 import { AuthService } from '@core/auth/auth.service';
+import { Subscription, timer, switchMap } from 'rxjs';
+
 @Component({
   selector: 'app-chat-container',
   imports: [RouterOutlet, ChatCard, RouterLink, RouterLinkActive, SearchUser, SettingsModal, BottomNav],
@@ -25,7 +27,7 @@ import { AuthService } from '@core/auth/auth.service';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChatContainer {
+export class ChatContainer implements OnDestroy {
   private router = inject(Router);
   private conversationService = inject(ConversationsService);
   private authService = inject(AuthService);
@@ -35,6 +37,8 @@ export class ChatContainer {
   isLoading = signal(true);
   showSearchUser = signal(false);
   showSettings = signal(false);
+  
+  private pollingSubscription: Subscription | null = null;
 
   activeTab = computed(() => {
     if (this.showSearchUser()) return 'contacts';
@@ -48,7 +52,10 @@ export class ChatContainer {
 
   loadConversations() {
     this.isLoading.set(true);
-    this.conversationService.getConversations().subscribe({
+    
+    this.pollingSubscription = timer(0, 5000).pipe(
+      switchMap(() => this.conversationService.getConversations())
+    ).subscribe({
       next: (data) => {
         console.log(data);
         this.conversations.set(data.data);
@@ -59,6 +66,12 @@ export class ChatContainer {
         this.isLoading.set(false);
       }
     });
+  }
+
+  ngOnDestroy() {
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+    }
   }
 
   toggleSearchUser() {

@@ -30,9 +30,16 @@ import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
             {{ time | timeAgo }}
           </span>
         </div>
-        <p class="text-xs truncate" [ngClass]="isActive ? 'text-slate-400' : 'text-slate-500'">
-          {{ lastMessage }}
-        </p>
+        <div class="flex justify-between items-center">
+          <p class="text-xs truncate flex-1 pr-2" [ngClass]="isActive ? 'text-slate-400' : 'text-slate-500'">
+            {{ lastMessage }}
+          </p>
+          @if(unreadCount > 0){
+            <span class="flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-green-500 text-slate-900 text-[10px] font-bold rounded-full">
+              {{ unreadCount }}
+            </span>
+          }
+        </div>
       </div>
       
     </div>
@@ -46,12 +53,14 @@ import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 })
 export class ChatCard { 
 
-  @Input({ required: true }) username!: string;
+    @Input({ required: true }) username!: string;
   @Input({ required: true }) lastMessage!: string;
-  @Input() avatarUrl: string = '/assets/avatars/default.jpg';
-  @Input() time: Date = new Date();
+  @Input() avatarUrl: string = '';
+  @Input() time!: Date;
   @Input() isOnline: boolean = false;
   @Input() isActive: boolean = false;
-
-
+  @Input() unreadCount: number = 0;
 }
+
+
+

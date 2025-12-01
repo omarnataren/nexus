@@ -21,7 +21,8 @@ export interface ConversationGet {
 	id: string,
 	last_message_at: Date,
 	participant_two_username: string,
-	last_message_content: string
+	last_message_content: string,
+    unread_count?: number
 }
 
 

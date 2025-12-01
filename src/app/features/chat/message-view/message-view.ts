@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, inject, computed, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, inject, computed, effect, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MessageBubble } from '../components/message-bubble/message-bubble';
 import { MessagesService } from '@core/services/messages.service';
@@ -21,6 +21,8 @@ export class MessageView implements OnInit, OnDestroy {
   public messagesService = inject(MessagesService);
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
+
+  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
   protected messageForm = this.fb.group({
     conversation_id: [this.route.snapshot.paramMap.get('conversationId')],  
@@ -49,7 +51,14 @@ export class MessageView implements OnInit, OnDestroy {
           });
         }
       });
+      setTimeout(() => this.scrollToBottom(), 100);
     });
+  }
+
+  scrollToBottom(): void {
+    try {
+      this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
+    } catch(err) { }
   }
 
   ngOnInit() {
@@ -77,7 +86,7 @@ export class MessageView implements OnInit, OnDestroy {
       next: (response) => {
         console.log('Message sent:', response);
         this.messageForm.reset({ conversation_id });
-        this.messagesService.getConversationMessages(conversation_id);
+        this.messagesService.getConversationMessages(conversation_id, true);
       },
       error: (err) => console.error('Error sending message:', err)
     });

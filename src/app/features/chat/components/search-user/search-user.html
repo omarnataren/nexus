@@ -42,6 +42,11 @@
                         <span class="material-icons text-sm">check</span>
                         Added
                     </span>
+                } @else if (isSelf()) {
+                    <span class="px-3 py-1.5 text-slate-500 text-xs font-medium flex items-center gap-1">
+                        <span class="material-icons text-sm">person</span>
+                        You
+                    </span>
                 } @else {
                     <button (click)="onAddUser()" class="px-3 py-1.5 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-lg text-xs font-medium hover:bg-blue-600/30 transition flex items-center gap-1">
                         <span class="material-icons text-sm">add</span>

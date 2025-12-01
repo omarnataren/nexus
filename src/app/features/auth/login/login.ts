@@ -41,7 +41,9 @@ export class Login {
       next: (response) =>{
         this.handleSuccess(response);
       },
-      error: (err) => console.error('Error during login:', err)
+      error: (err) =>{
+        
+      } 
     });
     
   }

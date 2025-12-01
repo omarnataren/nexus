@@ -15,22 +15,24 @@ export class MessagesService {
   
   private pollingSubscription: Subscription | null = null;
 
-  getConversationMessages(conversation_id: string) {
+  getConversationMessages(conversation_id: string, silent: boolean = false) {
     this.stopPolling();
     
-    this.isLoading.set(true);
-    this.currentMessages.set([]);
+    if (!silent) {
+      this.isLoading.set(true);
+      this.currentMessages.set([]);
+    }
     
     this.pollingSubscription = timer(0, 3000).pipe(
       switchMap(() => this.http.get<MessagesGetAllResponse>(`${this.apiUrl}/${conversation_id}`))
     ).subscribe({
       next: (response) => {
         this.currentMessages.set(response.data);
-        this.isLoading.set(false);
+        if (!silent) this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Error cargando chat:', err);
-        this.isLoading.set(false);
+        if (!silent) this.isLoading.set(false);
       }
     });
   }
