@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, computed, effect } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MessageBubble } from '../components/message-bubble/message-bubble';
 import { MessagesService } from '@core/services/messages.service';
@@ -37,12 +37,28 @@ export class MessageView implements OnInit {
     return firstMsg.sender_username === this.myUserName ? firstMsg.receiver_username : firstMsg.sender_username;
   });
 
+  constructor() {
+    effect(() => {
+      const messages = this.messagesService.currentMessages();
+      messages.forEach(msg => {
+        if (msg.sender_username !== this.myUserName && !msg.is_read) {
+          this.messagesService.markAsRead(msg.id).subscribe({
+            next: () => {
+              msg.is_read = true;
+            }
+          });
+        }
+      });
+    });
+  }
+
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       const conversationId = params.get('conversationId');
       
       if (conversationId) {
         this.messagesService.getConversationMessages(conversationId);
+        this.messageForm.patchValue({ conversation_id: conversationId });
       }
     });
   }

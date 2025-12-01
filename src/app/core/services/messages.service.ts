@@ -26,4 +26,8 @@ export class MessagesService {
   postMessage(conversation_id: string, content: string) {
     return this.http.post<Message>(this.apiUrl, { conversation_id, content });
   }
+
+  markAsRead(message_id: string) {
+    return this.http.patch(`${this.apiUrl}/${message_id}/read`, {is_read: true});
+  }
 }

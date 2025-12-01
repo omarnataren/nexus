@@ -11,8 +11,8 @@ export class ConversationsService {
   private http = inject(HttpClient);
   constructor() { }
 
-  postConversations(conversation: ConversationPost){
-    return this.http.post<ConversationPost>(this.apiUrl, conversation);
+  postConversations(participant_two_id: string){
+    return this.http.post<ConversationPost>(this.apiUrl, { participant_two_id });
   }
   
   getConversations(){

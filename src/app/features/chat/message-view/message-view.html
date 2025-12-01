@@ -1,8 +1,8 @@
 <div class="h-full flex flex-col relative bg-slate-900">
     
-  <div class="absolute top-6 left-0 right-0 flex px-4 justify-center z-20 pointer-events-none">
+  <div class="absolute top-4 left-0 right-0 flex px-4 justify-center z-20 pointer-events-none">
     
-    <div class="w-full bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-full p-1.5 pr-4 pl-2 flex items-center gap-4 shadow-2xl pointer-events-auto">
+    <div class="w-full bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-1.5 pr-4 pl-2 flex items-center gap-4 shadow-2xl pointer-events-auto">
       
       <div class="flex items-center gap-3">
         <div class="relative">
@@ -10,7 +10,7 @@
           <span class="absolute bottom-0 right-0 w-2.5 h-2.5 border-slate-800 rounded-full"></span>
         </div>
         <div>
-          <h2 class="text-sm font-bold text-white leading-tight">{{ chatPartnerName() }}</h2>
+          <h2 class="text-md mb-0.5 font-bold text-white leading-tight">{{ chatPartnerName() }}</h2>
           <p class="text-[10px] text-green-400 flex items-center gap-1 font-medium">
             <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Online
           </p>
@@ -29,15 +29,23 @@
     </div>
   </div>
 
-  <div class="flex-1 overflow-y-auto px-6 pt-28 pb-4 custom-scrollbar">
-    <div class="min-h-full flex flex-col justify-end space-y-6">
-      @for (msg of messagesService.currentMessages(); track msg.id) {
-        <app-message-bubble
-          [content]="msg.content"
-          [isMine]="msg.sender_username === myUserName" 
-          [isRead]="msg.is_read? true : false"
-          [time]="msg.created_at">
-        </app-message-bubble>
+  <div class="flex-1 overflow-y-auto px-6 pt-28  custom-scrollbar">
+    <div class="min-h-full flex flex-col space-y-2" [class.justify-end]="messagesService.currentMessages().length > 0" [class.justify-center]="messagesService.currentMessages().length === 0">
+      @if (messagesService.currentMessages().length === 0) {
+        <div class="flex flex-col items-center justify-center h-full text-slate-500 opacity-60">
+          <span class="material-icons text-6xl mb-2">chat_bubble_outline</span>
+          <p class="text-lg font-medium">No messages yet</p>
+          <p class="text-sm">Send a message to start the conversation</p>
+        </div>
+      } @else {
+        @for (msg of messagesService.currentMessages(); track msg.id) {
+          <app-message-bubble
+            [content]="msg.content"
+            [isMine]="msg.sender_username === myUserName" 
+            [isRead]="msg.is_read? true : false"
+            [time]="msg.created_at">
+          </app-message-bubble>
+        }
       }
     </div>
   </div>
@@ -51,10 +59,12 @@
       </button>
       <form [formGroup]="messageForm" class="flex items-center flex-1 gap-3" (ngSubmit)="onSubmit()">
         <input formControlName="content" type="text" placeholder="Type a message..." class="flex-1 bg-transparent text-sm text-white placeholder-slate-500 focus:outline-none py-2">
+        <div class="flex items-center gap-2 ">
+          <button type="submit" class="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full hover:shadow-[0_0_10px_rgba(37,99,235,0.5)] transition flex items-center justify-center">
+            <span class="material-icons text-md ml-1 my-0.5 ">send</span>
+          </button>
+        </div>
         
-        <button type="submit" class="p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-full hover:shadow-[0_0_10px_rgba(37,99,235,0.5)] transition flex items-center justify-center">
-          <span class="material-icons text-md ml-1">send</span>
-        </button>
       </form>
     </div>
   </div>
