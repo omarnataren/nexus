@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { RouterLink, Router} from '@angular/router';
 import {AuthService} from '@core/auth/auth.service';
@@ -19,6 +19,8 @@ export class Login {
   private router = inject(Router);
   private authService = inject(AuthService);
 
+  showPassword = signal(false);
+
   constructor() {
     this.loginForm = this.fb.group(
       {
@@ -26,6 +28,10 @@ export class Login {
         password: this.fb.control<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6)] }),
       }
     );
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword.update(value => !value);
   }
 
   onSubmit() {

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 @Component({
   selector: 'app-message-bubble',
-  imports: [CommonModule],
+  imports: [CommonModule, TimeAgoPipe],
   templateUrl: './message-bubble.html',
   styles: `
     :host {

@@ -1,5 +1,5 @@
-import { User } from "./user-model";
-
+import { User } from "@models/user-model";
+import { Pagination } from "@models/common-models";
 export interface Conversation{
     id: string;
     participant_one_id: string;
@@ -14,7 +14,7 @@ export interface Conversation{
 
 export interface ConversationGetAllResponse {
     data: ConversationGet[];
-    pagination: Pagination2;
+    pagination: Pagination;
 }
 
 export interface ConversationGet {
@@ -24,12 +24,7 @@ export interface ConversationGet {
 	last_message_content: string
 }
 
-export interface Pagination2 {
-    total: number;
-    page: number;
-    limit: number;
-    total_pages: number;
-}
+
 
 export interface ConversationPost {
     participant_two_id: string;

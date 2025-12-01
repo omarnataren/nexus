@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { UserService } from '@core/services/user.service';
@@ -19,6 +19,9 @@ export class Register {
   private router = inject(Router);
   private userService = inject(UserService);
 
+  showPassword = signal(false);
+  showConfirmPassword = signal(false);
+
   constructor() {
     this.registerForm = this.fb.group(
       {
@@ -29,6 +32,14 @@ export class Register {
       },
       { validators: this.passwordsMatchValidator }
     );
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword.update(value => !value);
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword.update(value => !value);
   }
 
   passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {

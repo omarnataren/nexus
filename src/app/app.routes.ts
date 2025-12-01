@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '@core/auth/auth.guard';
+import { authGuard, NoAuthGuard } from '@core/auth/auth.guard';
 
 export const routes: Routes = [
   // RUTAS PÚBLICAS
   {
     path: 'auth',
+    canActivate: [NoAuthGuard], 
     loadComponent: () => import('@layout/auth-layout/auth-layout').then(m => m.AuthLayoutComponent),
     children: [
       { path: 'login', loadComponent: () => import('@features/auth/login/login').then(m => m.Login) },

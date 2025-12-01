@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { User } from '@core/models/user-model';
+import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 @Component({
   selector: 'app-chat-card',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TimeAgoPipe],
   template: `
   <div 
       class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition border-l-4"
@@ -26,7 +27,7 @@ import { User } from '@core/models/user-model';
               {{ username }}
           </h3>
           <span class="text-xs" [ngClass]="isActive ? 'text-blue-400' : 'text-slate-500'">
-            {{ time }}
+            {{ time | timeAgo }}
           </span>
         </div>
         <p class="text-xs truncate" [ngClass]="isActive ? 'text-slate-400' : 'text-slate-500'">

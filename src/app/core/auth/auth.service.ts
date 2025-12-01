@@ -21,6 +21,13 @@ export class AuthService {
   public currentUser = this._currentUser.asReadonly();
   public isAuthenticated = this._isAuthenticated.asReadonly();
 
+  constructor() {
+    const token = this.getAccessToken();
+    if (token) {
+      this.decodeAndSetUser(token);
+    }
+  }
+
   login(credentials: any) {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(res => this.saveTokens(res))

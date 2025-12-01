@@ -37,7 +37,7 @@
     }
 
     <div class="flex items-center gap-1 px-1 opacity-80 select-none">
-        <span class="text-[10px] text-slate-500">{{ time }}</span>
+        <span class="text-[10px] text-slate-500">{{ time | timeAgo }}</span>
         
         @if (isMine) {
             <span class="material-icons text-[14px] transition-colors duration-300" 

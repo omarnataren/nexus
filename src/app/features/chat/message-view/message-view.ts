@@ -3,9 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { MessageBubble } from '../components/message-bubble/message-bubble';
 import { MessagesService } from '@core/services/messages.service';
 import { AuthService } from '@core/auth/auth.service';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 @Component({
   selector: 'app-message-view',
-  imports: [MessageBubble],
+  imports: [MessageBubble, ReactiveFormsModule],
   templateUrl: './message-view.html',
   styles: `
     :host {
@@ -19,6 +20,12 @@ export class MessageView implements OnInit {
   private route = inject(ActivatedRoute);
   public messagesService = inject(MessagesService);
   private authService = inject(AuthService);
+  private fb = inject(FormBuilder);
+
+  protected messageForm = this.fb.group({
+    conversation_id: [this.route.snapshot.paramMap.get('conversationId')],  
+    content: ['', [Validators.required, Validators.minLength(1)]]
+  });
 
   myUserId = this.authService.currentUser()?.id;
   myUserName = this.authService.currentUser()?.username;
@@ -40,4 +47,19 @@ export class MessageView implements OnInit {
     });
   }
   
+  onSubmit() {
+    if (this.messageForm.invalid) return;
+
+    const { conversation_id, content } = this.messageForm.value;
+    if (!conversation_id || !content) return;
+
+    this.messagesService.postMessage(conversation_id, content).subscribe({
+      next: (response) => {
+        console.log('Message sent:', response);
+        this.messageForm.reset({ conversation_id });
+        this.messagesService.getConversationMessages(conversation_id);
+      },
+      error: (err) => console.error('Error sending message:', err)
+    });
+  }
 }

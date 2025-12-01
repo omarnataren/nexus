@@ -21,11 +21,14 @@
     <div class="relative group">        
       <span class="material-icons absolute left-3 top-3 text-slate-500 group-focus-within:text-blue-400 transition">lock</span>
       <input 
-        type="password" 
+        [type]="showPassword() ? 'text' : 'password'" 
         formControlName="password"
         placeholder="Password"
-        class="w-full bg-slate-950/50 text-white border border-slate-500 rounded-lg py-3 pl-10 pr-4outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition shadow-inner placeholder-slate-500 mb-2"
+        class="w-full bg-slate-950/50 text-white border border-slate-500 rounded-lg py-3 pl-10 pr-10 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition shadow-inner placeholder-slate-500 mb-2"
       >
+      <button type="button" (click)="togglePasswordVisibility()" class="absolute right-3 top-3 text-slate-500 hover:text-slate-300 focus:outline-none">
+        <span class="material-icons">{{ showPassword() ? 'visibility' : 'visibility_off' }}</span>
+      </button>
     </div>
 
     <button 

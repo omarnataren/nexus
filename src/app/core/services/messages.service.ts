@@ -22,4 +22,8 @@ export class MessagesService {
         error: (err) => console.error('Error cargando chat:', err)
       });
   }
+
+  postMessage(conversation_id: string, content: string) {
+    return this.http.post<Message>(this.apiUrl, { conversation_id, content });
+  }
 }
