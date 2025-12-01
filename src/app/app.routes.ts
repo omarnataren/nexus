@@ -22,11 +22,18 @@ export const routes: Routes = [
     children: [
       { 
         path: 'chat', 
+        canActivate: [authGuard],
         loadComponent: () => import('@features/chat/chat-container/chat-container').then(m => m.ChatContainer),
         children: [
            // Cuando seleccionas un usuario de la lista
           { path: ':conversationId',
+            canActivate: [authGuard],
             loadComponent: () => import('@features/chat/message-view/message-view').then(m => m.MessageView) 
+          },
+          {
+            path: '',
+            canActivate: [authGuard],
+            loadComponent: () => import('@features/chat/components/empty-chat/empty-chat').then(m => m.EmptyChat)
           }
         ]
       },
@@ -34,5 +41,5 @@ export const routes: Routes = [
     ]
   },
     // Ruta comodín para redirigir a login
-  { path: '**', redirectTo: 'auth/login' }
+  { path: '**', redirectTo: 'auth' }
 ];

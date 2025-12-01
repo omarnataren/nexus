@@ -47,7 +47,6 @@ export class AuthService {
       headers: { Authorization: `Bearer ${refreshToken}` }
     }).pipe(
       tap(res => {
-        // Al recibir el nuevo access_token, lo guardamos [cite: 87]
         localStorage.setItem('nexus_token', res.access_token);
         // Si el back devuelve un nuevo refresh token, lo actualizamos también (rotación)
         if (res.refresh_token) {
@@ -55,7 +54,7 @@ export class AuthService {
         }
       }),
       catchError(err => {
-        // Si el refresh falla (ej. refresh token expirado), adiós sesión
+        // Si el refresh falla adiós sesión
         this.logout();
         return throwError(() => err);
       })
@@ -63,16 +62,24 @@ export class AuthService {
   }
 
   logout() {
+    const refreshToken = this.getRefreshToken();
+    
+    if (refreshToken) {
+      this.http.post(`${this.apiUrl}/logout`, { refresh_token: refreshToken }).subscribe({
+        error: (err) => console.error('Error notifying logout to backend:', err)
+      });
+    }
+
     localStorage.removeItem('nexus_token');
     localStorage.removeItem('nexus_refresh_token');
     this._currentUser.set(null);
+    this._isAuthenticated.set(false);
     this.router.navigate(['/auth/login']);
   }
 
   private saveTokens(res: AuthResponse) {
     localStorage.setItem('nexus_token', res.access_token);
     localStorage.setItem('nexus_refresh_token', res.refresh_token);
-    // Aquí decodificarías el usuario como vimos antes
     this.decodeAndSetUser(res.access_token); 
   }
 
@@ -96,7 +103,6 @@ export class AuthService {
       this._isAuthenticated.set(true);
 
     } catch (error) {
-      // Token corrupto o manipulado
       console.error('Token inválido');
       this.logout();
     }

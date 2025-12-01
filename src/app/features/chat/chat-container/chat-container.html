@@ -7,21 +7,29 @@
     
     <!-- Backdrop -->
     <div class="absolute inset-0 z-40 bg-slate-950/60 backdrop-blur-sm transition-opacity duration-300"
-         [class.opacity-100]="showSearchUser()"
-         [class.opacity-0]="!showSearchUser()"
-         [class.pointer-events-none]="!showSearchUser()"
-         (click)="toggleSearchUser()">
+         [class.opacity-100]="showSearchUser() || showSettings()"
+         [class.opacity-0]="!showSearchUser() && !showSettings()"
+         [class.pointer-events-none]="!showSearchUser() && !showSettings()"
+         (click)="showSearchUser() ? toggleSearchUser() : toggleSettings()">
     </div>
 
     <!-- Search User Bottom Sheet -->
     <app-search-user 
-      class="absolute bottom-0 left-0 right-0 z-50 h-[calc(55%-50px)] transition-transform duration-500 cubic-bezier(0.32, 0.72, 0, 1)"
+      class="absolute bottom-[73px] left-0 right-0 z-40 h-[calc(55%-50px)] transition-transform duration-500 cubic-bezier(0.32, 0.72, 0, 1)"
       [class.translate-y-0]="showSearchUser()"
-      [class.translate-y-full]="!showSearchUser()"
+      [class.translate-y-[150%]]="!showSearchUser()"
       [conversations]="conversations()"
       (close)="toggleSearchUser()" 
       (conversationCreated)="loadConversations()">
     </app-search-user>
+
+    <!-- Settings Bottom Sheet -->
+    <app-settings-modal
+      class="absolute bottom-[73px] left-0 right-0 z-40 h-auto max-h-[40%] transition-transform duration-500 cubic-bezier(0.32, 0.72, 0, 1)"
+      [class.translate-y-0]="showSettings()"
+      [class.translate-y-[150%]]="!showSettings()"
+      (close)="toggleSettings()">
+    </app-settings-modal>
 
     <div class="p-5 pb-2">
       <div class="text-center">
@@ -38,42 +46,40 @@
 
     <div class="flex-1 overflow-y-auto px-3 space-y-1 mt-2 custom-scrollbar">
       
-      @for(conversation of conversations(); track conversation.id ){
-				<a [routerLink]="['/chat', conversation.id]" 
-          class="block mb-1 relative rounded-xl transition-all duration-200 hover:bg-slate-800/30 group" 
-          routerLinkActive="active-chat-class">
-          
-          <!-- Active Indicator -->
-          <div class="active-indicator absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-blue-500 rounded-r-full shadow-[0_0_15px_rgba(59,130,246,0.8)] opacity-0 transition-all duration-300"></div>
+      @if (isLoading()) {
+        <div class="flex flex-col items-center justify-center h-32 text-slate-500">
+          <div class="w-8 h-8 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-2"></div>
+          <p class="text-xs">Loading chats...</p>
+        </div>
+      } @else {
+        @for(conversation of conversations(); track conversation.id ){
+          <a [routerLink]="['/chat', conversation.id]" 
+            class="block mb-1 relative rounded-xl transition-all duration-200 hover:bg-slate-800/30 group" 
+            routerLinkActive="active-chat-class">
+            
+            <!-- Active Indicator -->
+            <div class="active-indicator absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-blue-500 rounded-r-full shadow-[0_0_15px_rgba(59,130,246,0.8)] opacity-0 transition-all duration-300"></div>
 
-          <app-chat-card 
-            [username]="conversation.participant_two_username" 
-            [lastMessage]="conversation.last_message_content" 
-            [avatarUrl]="'/avatars/avatar_default.svg'" 
-            [time]="conversation.last_message_at" 
-            [isOnline]="false" 
-            [isActive]="false"
-          >
-          </app-chat-card>
-				</a>
-			}
+            <app-chat-card 
+              [username]="conversation.participant_two_username" 
+              [lastMessage]="conversation.last_message_content" 
+              [avatarUrl]="'/avatars/avatar_default.svg'" 
+              [time]="conversation.last_message_at" 
+              [isOnline]="false" 
+              [isActive]="false"
+            >
+            </app-chat-card>
+          </a>
+        }
+      }
 
     </div>
 
-    <div class="p-4 border-t border-slate-800/50 flex justify-around text-slate-400 bg-slate-900/20">
-      <button class="flex flex-col items-center gap-1 text-blue-500 hover:text-blue-400">
-        <span class="material-icons text-xl">chat_bubble</span>
-        <span class="text-[10px] font-medium">Chats</span>
-      </button>
-      <button (click)="toggleSearchUser()" class="flex flex-col items-center gap-1 hover:text-white transition">
-        <span class="material-icons text-xl">people</span>
-        <span class="text-[10px] font-medium">Contacts</span>
-      </button>
-      <button class="flex flex-col items-center gap-1 hover:text-white transition">
-        <span class="material-icons text-xl">settings</span>
-        <span class="text-[10px] font-medium">Settings</span>
-      </button>
-    </div>
+    <app-bottom-nav 
+      [activeTab]="activeTab()" 
+      (tabSelected)="onTabSelected($event)"
+      class="relative z-50">
+    </app-bottom-nav>
   </aside>
 
   <!-- Main Chat Area -->

@@ -19,6 +19,8 @@ export class MessageBubble {
   @Input() senderAvatar: string = 'avatars/avatar_default.svg';
   @Input() time: Date = new Date();
   @Input() isRead: boolean = false;
+  @Input() isFirstInSequence: boolean = true;
+  @Input() isLastInSequence: boolean = true;
 
   isCodeBlock: boolean = false;
   cleanContent: string = '';

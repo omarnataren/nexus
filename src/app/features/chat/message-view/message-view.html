@@ -30,20 +30,27 @@
   </div>
 
   <div class="flex-1 overflow-y-auto px-6 pt-28  custom-scrollbar">
-    <div class="min-h-full flex flex-col space-y-2" [class.justify-end]="messagesService.currentMessages().length > 0" [class.justify-center]="messagesService.currentMessages().length === 0">
-      @if (messagesService.currentMessages().length === 0) {
+    <div class="min-h-full flex flex-col space-y-1" [class.justify-end]="messagesService.currentMessages().length > 0" [class.justify-center]="messagesService.currentMessages().length === 0">
+      @if (messagesService.isLoading()) {
+        <div class="flex flex-col items-center justify-center h-full text-slate-500">
+          <div class="w-10 h-10 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-2"></div>
+          <p class="text-sm">Loading messages...</p>
+        </div>
+      } @else if (messagesService.currentMessages().length === 0) {
         <div class="flex flex-col items-center justify-center h-full text-slate-500 opacity-60">
           <span class="material-icons text-6xl mb-2">chat_bubble_outline</span>
           <p class="text-lg font-medium">No messages yet</p>
           <p class="text-sm">Send a message to start the conversation</p>
         </div>
       } @else {
-        @for (msg of messagesService.currentMessages(); track msg.id) {
+        @for (msg of messagesService.currentMessages(); track msg.id; let i = $index) {
           <app-message-bubble
             [content]="msg.content"
             [isMine]="msg.sender_username === myUserName" 
             [isRead]="msg.is_read? true : false"
-            [time]="msg.created_at">
+            [time]="msg.created_at"
+            [isFirstInSequence]="i === 0 || messagesService.currentMessages()[i-1].sender_username !== msg.sender_username"
+            [isLastInSequence]="i === messagesService.currentMessages().length - 1 || messagesService.currentMessages()[i+1].sender_username !== msg.sender_username">
           </app-message-bubble>
         }
       }

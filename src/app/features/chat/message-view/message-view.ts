@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, computed, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, inject, computed, effect } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MessageBubble } from '../components/message-bubble/message-bubble';
 import { MessagesService } from '@core/services/messages.service';
@@ -16,7 +16,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MessageView implements OnInit { 
+export class MessageView implements OnInit, OnDestroy { 
   private route = inject(ActivatedRoute);
   public messagesService = inject(MessagesService);
   private authService = inject(AuthService);
@@ -61,6 +61,10 @@ export class MessageView implements OnInit {
         this.messageForm.patchValue({ conversation_id: conversationId });
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.messagesService.stopPolling();
   }
   
   onSubmit() {

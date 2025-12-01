@@ -1,15 +1,22 @@
-<div class="flex gap-3 max-w-2xl mb-4 animate-fade-in-up" 
-     [ngClass]="{'ml-auto justify-end': isMine, 'justify-start': !isMine}">
+<div class="flex gap-3 max-w-2xl animate-fade-in-up" 
+     [ngClass]="{
+       'ml-auto justify-end': isMine, 
+       'justify-start': !isMine,
+       'mb-1': !isLastInSequence,
+       'mb-4': isLastInSequence
+     }">
 
   @if (!isMine) {
-    <div class="flex flex-col justify-end">
-        <img [src]="senderAvatar" class="w-8 h-8 rounded-full object-cover ring-2 ring-slate-800" [alt]="senderName">
+    <div class="flex flex-col justify-end w-8">
+        @if (isLastInSequence) {
+            <img [src]="senderAvatar" class="w-8 h-8 rounded-full object-cover ring-2 ring-slate-800" [alt]="senderName">
+        }
     </div>
   }
 
-  <div class="flex flex-col space-y-1" [ngClass]="{'items-end': isMine, 'items-start': !isMine}">
+  <div class="flex flex-col space-y-1 max-w-[85%]" [ngClass]="{'items-end': isMine, 'items-start': !isMine}">
     
-    @if (!isMine && senderName) {
+    @if (!isMine && senderName && isFirstInSequence) {
         <span class="text-[10px] text-slate-500 ml-1">{{ senderName }}</span>
     }
 
@@ -24,29 +31,32 @@
             <div class="p-3 text-slate-300 overflow-x-auto">
                 <pre>{{ cleanContent }}</pre>
             </div>
+            <div class="px-3 py-1 bg-slate-900/30 flex justify-end">
+                 <span class="text-[10px] text-slate-500">{{ time | timeAgo }}</span>
+            </div>
         </div>
     } 
     
     @else {
-        <div class="px-4 py-2.5 rounded-2xl text-sm shadow-sm break-words max-w-full"
+        <div class="px-4 py-2 text-sm shadow-sm break-words relative min-w-[120px]"
              [ngClass]="isMine 
-                ? 'bg-blue-600 text-white rounded-br-sm shadow-[0_0_15px_rgba(37,99,235,0.3)]' 
-                : 'bg-slate-800 text-slate-200 rounded-bl-sm border border-slate-700/50'">
-            {{ content }}
+                ? 'bg-blue-600 text-white rounded-2xl rounded-tr-sm shadow-[0_0_15px_rgba(37,99,235,0.3)]' 
+                : 'bg-slate-800 text-slate-200 rounded-2xl rounded-tl-sm border border-slate-700/50'">
+            
+            <span class="block pb-1">{{ content }}</span>
+            
+            <div class="float-right ml-2 mt-1 flex items-center gap-1 opacity-70 select-none leading-none">
+                <span class="text-[10px]">{{ time | timeAgo }}</span>
+                
+                @if (isMine) {
+                    <span class="material-icons text-[14px] transition-colors duration-300" 
+                        [ngClass]="isRead ? 'text-blue-300' : 'text-blue-200/70'">
+                        done_all
+                    </span>
+                }
+            </div>
         </div>
     }
 
-    <div class="flex items-center gap-1 px-1 opacity-80 select-none">
-        <span class="text-[10px] text-slate-500">{{ time | timeAgo }}</span>
-        
-        @if (isMine) {
-            <span class="material-icons text-[14px] transition-colors duration-300" 
-                  [ngClass]="isRead ? 'text-blue-400' : 'text-slate-600'">
-                done_all
-            </span>
-        }
-    </div>
-
   </div>
-
 </div>
