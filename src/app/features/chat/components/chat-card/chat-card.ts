@@ -36,7 +36,7 @@ import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
           </p>
           @if(unreadCount > 0){
             <span class="flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-green-500 text-slate-900 text-[10px] font-bold rounded-full">
-              {{ unreadCount }}
+              {{ unreadCount > 99 ? '99+' : unreadCount }}
             </span>
           }
         </div>

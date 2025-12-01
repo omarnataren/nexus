@@ -51,9 +51,12 @@ export class ChatContainer implements OnDestroy {
   }
 
   loadConversations() {
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+    }
     this.isLoading.set(true);
     
-    this.pollingSubscription = timer(0, 5000).pipe(
+    this.pollingSubscription = timer(0, 3000).pipe(
       switchMap(() => this.conversationService.getConversations())
     ).subscribe({
       next: (data) => {
